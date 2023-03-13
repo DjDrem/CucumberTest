@@ -2,11 +2,11 @@ package StepDefenition;
 
 import io.cucumber.java.ru.Когда;
 import io.cucumber.java.ru.Тогда;
-import io.qameta.allure.Step;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import org.json.JSONObject;
+import org.junit.jupiter.api.Assertions;
 
 import java.util.ResourceBundle;
 
@@ -50,9 +50,9 @@ public class RickAndMorti {
         charLocation = new JSONObject(infoCharacter.getBody().asString()).getJSONObject("location").get("name").toString();
         charEpisode = (new JSONObject(infoCharacter.getBody().asString()).getJSONArray("episode").length());
         charStatus = new JSONObject(infoCharacter.getBody().asString()).get("status").toString();
+        Assertions.assertNotNull(charId);
     }
 
-    @Step("Ввод ID персонажа ")
     @Тогда("показать информацию о крайнем эпизоде")
     public static void selectEpisode() {
         Response gettingLastEpisode = given()
@@ -65,9 +65,9 @@ public class RickAndMorti {
         int episode = (new JSONObject(gettingLastEpisode.getBody().asString()).getJSONArray("episode").length() - 1);
         lastEpisode = Integer.parseInt(new JSONObject(gettingLastEpisode.getBody().asString())
                 .getJSONArray("episode").get(episode).toString().replaceAll("[^0-9]", ""));
+        Assertions.assertEquals(51, lastEpisode, "Ошибка");
     }
 
-    @Step("Получение ID последнего персонажа из эпизода")
     @Когда("получена информация о эпизоде")
     public static void gettingLastCharacterID(){
         Response gettingCharacter = given()
@@ -81,9 +81,9 @@ public class RickAndMorti {
                 .length()-1);
         idCharacter = Integer.parseInt(new JSONObject(gettingCharacter.getBody().asString())
                 .getJSONArray("characters").get(lastCharacter).toString().replaceAll("[^0-9]", ""));
+        Assertions.assertEquals(825, idCharacter);
     }
 
-    @Step("Отображение информации последнего персонажа с ID =")
     @Когда("получен ID последнего персонажа")
     public static void infoLastCharacters(){
         String characterId = Integer.toString(idCharacter);
@@ -99,5 +99,7 @@ public class RickAndMorti {
         charLastSpecies = new JSONObject(infoLastCharacter.getBody().asString()).get("species").toString();
         charLastLocation = new JSONObject(infoLastCharacter.getBody().asString()).getJSONObject("location")
                 .get("name").toString();
+        Assertions.assertEquals(charSpecies, charLastSpecies, "Расса персонажей");
+        Assertions.assertEquals(charLocation, charLastLocation, "Местоположение персонажей");
     }
 }
