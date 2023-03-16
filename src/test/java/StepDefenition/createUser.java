@@ -1,6 +1,7 @@
 package StepDefenition;
 
 import io.cucumber.java.ru.Когда;
+import io.qameta.allure.Allure;
 import io.qameta.allure.Step;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.response.Response;
@@ -44,5 +45,6 @@ public class createUser {
                 .response();
         Assertions.assertEquals((new JSONObject(sendJson.getBody().asString()).get("name")), (body.get("name")), "Неудача");
         Assertions.assertEquals((new JSONObject(sendJson.getBody().asString()).get("job")), (body.get("job")), "Неудача");
+        Allure.addAttachment("Result", String.valueOf(body));
     }
 }

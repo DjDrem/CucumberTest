@@ -2,6 +2,7 @@ package StepDefenition;
 
 import io.cucumber.java.ru.Когда;
 import io.cucumber.java.ru.Тогда;
+import io.qameta.allure.Allure;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
@@ -51,6 +52,13 @@ public class RickAndMorti {
         charEpisode = (new JSONObject(infoCharacter.getBody().asString()).getJSONArray("episode").length());
         charStatus = new JSONObject(infoCharacter.getBody().asString()).get("status").toString();
         Assertions.assertNotNull(charId);
+        Allure.addAttachment("ID", charId);
+        Allure.addAttachment("Name", charName);
+        Allure.addAttachment("Gender", charGender);
+        Allure.addAttachment("Species", charSpecies);
+        Allure.addAttachment("Location", charLocation);
+        Allure.addAttachment("Episode", String.valueOf(charEpisode));
+        Allure.addAttachment("Status", charStatus);
     }
 
     @Тогда("показать информацию о крайнем эпизоде")
@@ -66,6 +74,7 @@ public class RickAndMorti {
         lastEpisode = Integer.parseInt(new JSONObject(gettingLastEpisode.getBody().asString())
                 .getJSONArray("episode").get(episode).toString().replaceAll("[^0-9]", ""));
         Assertions.assertEquals(51, lastEpisode, "Ошибка");
+        Allure.addAttachment("LastEpisode", String.valueOf(lastEpisode));
     }
 
     @Когда("получена информация о эпизоде")
@@ -82,10 +91,11 @@ public class RickAndMorti {
         idCharacter = Integer.parseInt(new JSONObject(gettingCharacter.getBody().asString())
                 .getJSONArray("characters").get(lastCharacter).toString().replaceAll("[^0-9]", ""));
         Assertions.assertEquals(825, idCharacter);
+        Allure.addAttachment("ID character", String.valueOf(idCharacter));
     }
 
     @Когда("получен ID последнего персонажа")
-    public static void infoLastCharacters(){
+    public static void infoLastCharacters(int idCharacter){
         String characterId = Integer.toString(idCharacter);
         Response infoLastCharacter = given()
                 .spec(reqSpecFirst)
@@ -101,5 +111,9 @@ public class RickAndMorti {
                 .get("name").toString();
         Assertions.assertEquals(charSpecies, charLastSpecies, "Расса персонажей");
         Assertions.assertEquals(charLocation, charLastLocation, "Местоположение персонажей");
+        Allure.addAttachment("LastID", charLastId);
+        Allure.addAttachment("LastName", charLastName);
+        Allure.addAttachment("LastSpecies", charLastSpecies);
+        Allure.addAttachment("LastLocation", charLastLocation);
     }
 }
